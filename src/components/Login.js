@@ -15,8 +15,6 @@ class Login extends Component {
         const { events } = this.state;
 
         console.log(events);
-
-
         return (
 
 <section class="hero is-fullheight">
