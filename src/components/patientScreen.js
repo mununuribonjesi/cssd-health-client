@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import './patientScreen.css'
+import './patientScreen.css';
+
 
 
 class patientScreen extends Component {
@@ -8,6 +9,7 @@ class patientScreen extends Component {
 
         this.showAppointments = this.showAppointments.bind(this);
         this.showPatients = this.showPatients.bind(this);
+        this.showView = this.showView.bind(this);
 
         this.state = {
             events: [],
@@ -25,12 +27,23 @@ class patientScreen extends Component {
      showAppointments (){
     
         this.setState({isPatients:false});
+        this.setState({isView:false});
         this.setState({isAppointmentRequest:true});
+    }
+
+    showView(){
+
+        this.setState({isPatients:false});
+        this.setState({isAppointmentRequest:false});
+        this.setState({isView:true});
+
     }
 
      showPatients ()
     {
-        this.setState({isAppointmentRequest:false});          
+        
+        this.setState({isView:false});
+        this.setState({isAppointmentRequest:false});
         this.setState({isPatients:true});
 
     }
@@ -39,6 +52,10 @@ class patientScreen extends Component {
 
         const isAppointmentRequest = this.state.isAppointmentRequest;
         const isPatients = this.state.isPatients;
+        const isView = this.state.isView;
+
+
+        
 
 
 
@@ -110,7 +127,7 @@ class patientScreen extends Component {
       <tbody>
         <tr>
           <td>Karen B</td>
-          <td><button onClick='toggleView()' class="button is-info">view</button></td>
+          <td><button onClick={this.showView} class="button is-info">view</button></td>
 
         </tr>
       </tbody>
@@ -118,7 +135,56 @@ class patientScreen extends Component {
     </div>}
 </div>
 
+<div>
+
+{isView &&
+<div className="columns"> 
+            
+            <table className="table">
+      <thead>
+        <tr>
+          <th>NHS NO: 8674453</th>
+            <th>Name: Karen B</th>
+            <th>Female</th>
+            <th>  <button onClick={this.showView} class="button is-warning">Export</button></th>
+        </tr>
+        <tr>
+            <th> 
+                            Recent Health Data
+
+
+            </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+            <td>
+
+
+            <Chart type="line" data={data} />
+            </td>
+
+
+        </tr>
+      </tbody>
+    </table>
+    </div>}
 </div>
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
 </div>
 
         );
