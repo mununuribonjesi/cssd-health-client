@@ -160,8 +160,6 @@ class patientScreen extends Component {
         <tr>
             <td>
 
-
-            <Chart type="line" data={data} />
             </td>
 
 
