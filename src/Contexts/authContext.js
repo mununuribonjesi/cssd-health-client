@@ -7,8 +7,9 @@ export const AuthContext = createContext();
 class AuthenticationProvider extends Component {
     state = {
         isAuthenticated: false,
-        username:'',
-        password:''
+        username:'james',
+        password:'joe'
+    
     }
 
     async login() {
@@ -26,9 +27,10 @@ class AuthenticationProvider extends Component {
         }
     }
 
+
     render() {
         return (
-            <AuthContext.Provider value={{...this.state}, this.login}>
+            <AuthContext.Provider value={{...this.state,login:this.login}}>
                 {this.props.children}
             </AuthContext.Provider>
         )

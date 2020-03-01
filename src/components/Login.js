@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import './Login.css';
-import {Redirect,BrowserRouter as Router} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 import axios from'axios';
-import authContext from '../Contexts/authContext';
+import authContext, { AuthContext } from '../Contexts/authContext';
 
 
 class Login extends Component {
+  static contextType = authContext;
     constructor(props) {
         super(props)
         this.state = {
@@ -67,9 +68,17 @@ class Login extends Component {
 
         return (
 
+          <AuthContext.Consumer>
 
-<section className="hero is-fullheight">
-  <div className="hero-body"></div>
+            {(context) => {
+              
+              const{username,password} = context;
+
+              console.log(context);
+
+              return(
+                <section className="hero is-fullheight">
+      <div className="hero-body"></div>
     <div className="container">
       <div className="columns is-centered">
           <form onSubmit={this.submitForm} action="" className="box">
@@ -95,6 +104,12 @@ class Login extends Component {
   </div>
   </div>
   </section>
+
+              )
+            }}
+          </AuthContext.Consumer>
+
+
 
         );
     }

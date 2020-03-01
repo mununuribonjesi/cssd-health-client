@@ -5,8 +5,7 @@ import Login from './components/Login';
 import patientScreen from './components/patientScreen';
 import { BrowserRouter as Router, Route, Switch,Redirect } from 'react-router-dom';
 import patientRegistration from './components/patientRegistration';
-
-
+import AuthContextProvider from './Contexts/authContext';
 
 const ProtectedRoute = ({component:Component,...rest}) =>{
 
@@ -28,11 +27,11 @@ export default class App extends Component {
       <NavBar/>
       <Router>
         <Switch>
+          <AuthContextProvider> 
           <Route exact path= "/" component={Login} />
           <ProtectedRoute exact path= "/patientScreen" component={patientScreen} />
-          <ProtectedRoute exact path= "/patientRegistration" component={patientRegistration}  />
-        
-        
+          <ProtectedRoute exact path= "/patientRegistration" component={patientRegistration}  /> 
+          </AuthContextProvider>
         </Switch>
       </Router>
   
