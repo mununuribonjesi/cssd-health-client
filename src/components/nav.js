@@ -5,18 +5,24 @@ export class NavBar extends Component
 {
   render () {
     return (
-      <nav class="navbar is-primary" role="navigation">
-        <div class="container">
-          <div class="navbar-brand">
-              <a href="/" class="navbar-item">
+      <nav className="navbar is-primary" role="navigation">
+        <div className="container">
+          <div className="navbar-brand">
+
+              <a href="/" className="navbar-item">
                 HELTH
               </a>
+     
           </div>
         </div>
 
-        <div class="navbar-start">
-          <a class="navbar-item">
-              Home      
+        <div className="navbar-start">
+          <a href='patientScreen' className="navbar-item">
+              Patients      
+          </a>
+
+          <a href='patientRegistration'className="navbar-item">
+              Register      
           </a>
         </div>
       </nav> 

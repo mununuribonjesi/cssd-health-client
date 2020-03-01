@@ -1,30 +1,54 @@
 import React, { Component } from 'react';
 import './patientScreen.css';
-
-
+import {Line } from 'react-chartjs-2';
 
 class patientScreen extends Component {
     constructor(props) {
         super(props)
-
         this.showAppointments = this.showAppointments.bind(this);
         this.showPatients = this.showPatients.bind(this);
         this.showView = this.showView.bind(this);
-
         this.state = {
             events: [],
             isView: false,
             isPatients: true,
-            isAppointmentRequest: false
+            isAppointmentRequest: false,
        }
-
-
-
     }
 
+    healthData()
+    {
+        var recentHealthData = {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [
+          {
+            label: 'Recent Health Data',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: 'rgba(75,192,192,0.4)',
+            borderColor: 'rgba(75,192,192,1)',
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: 'yellow',
+            pointBackgroundColor: '#fff',
+            pointBorderWidth: 20,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+            pointHoverBorderColor: 'rgba(220,220,220,1)',
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data: [65, 59, 80, 81, 56, 55, 40]
+          }
+        ]
+      }
 
+      return recentHealthData;
+    }
 
-     showAppointments (){
+  showAppointments (){
     
         this.setState({isPatients:false});
         this.setState({isView:false});
@@ -53,11 +77,11 @@ class patientScreen extends Component {
         const isAppointmentRequest = this.state.isAppointmentRequest;
         const isPatients = this.state.isPatients;
         const isView = this.state.isView;
+        const recentHealthdata = this.healthData;
+        const recentDataActivity = this.healthData;
 
 
-        
-
-
+ 
 
         return (
 
@@ -68,7 +92,7 @@ class patientScreen extends Component {
         <div className="container"> 
             <div className="searchbar">
                <input type="text" class="search_input" placeholder="Search Patients"/>
-               <a href="#" className="search_icon"><i class="fa fa-search"></i></a>
+      <i class="fa fa-search"></i>
             </div>     
             </div>
 
@@ -107,10 +131,6 @@ class patientScreen extends Component {
 </table>
     </div>}
 </div>
-
-
-
-
 
 <div>
 
@@ -152,7 +172,26 @@ class patientScreen extends Component {
             <th> 
                             Recent Health Data
 
+                            <Line
+                            height={70}
+  data={recentHealthdata}/>
 
+
+            </th>
+        </tr>
+        <tr>
+            <th> 
+                            Recent Data Activity
+
+                            <Line
+                            height={70}
+data={recentDataActivity}/>
+            </th>
+        </tr>
+
+        <tr>
+            <th> 
+                            Appointment Requests
             </th>
         </tr>
       </thead>
@@ -168,21 +207,7 @@ class patientScreen extends Component {
     </table>
     </div>}
 </div>
-
-
-
-
-
-
-
-
 </div>
-
-
-
-
-
-
 </div>
 
         );

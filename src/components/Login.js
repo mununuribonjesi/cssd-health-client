@@ -1,46 +1,93 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import './Login.css'
+import './Login.css';
+import {Redirect,BrowserRouter as Router} from 'react-router-dom';
+import axios from'axios';
+import authContext from '../Contexts/authContext';
+
 
 class Login extends Component {
     constructor(props) {
         super(props)
-
         this.state = {
-            events: []
+          username:'',
+          password:'',
+          loggedIn:false
         }
+        this.onChange = this.onChange.bind(this);
+        this.submitForm = this.submitForm.bind(this);
     }
 
-    render() {
-        const { events } = this.state;
+    onChange(e)
+    {
+      this.setState({
+        [e.target.name]:e.target.value
+      });
+    }
 
-        console.log(events);
+    submitForm(e)
+    {
+      e.preventDefault();
+      this.login();
+    }
+
+
+    isLoggedIn()
+    {
+      this.setState({loggedIn:!this.state.loggedIn});
+    }
+
+
+  async login() {
+    
+      const user = {username:this.state.username,password:this.state.password}
+      const response = 
+      await axios.post('https://shu-helth-uat.azurewebsites.net/api/login', {
+        'username':user.username,
+        'password':user.password
+      });
+
+      if (response.status === 200)
+      {
+        const token = response.data.token;
+        localStorage.setItem('token',token);
+        this.setState({loggedIn:true});
+      }
+  }
+  
+    render() {
+
+      const isLoggedIn = this.state.loggedIn;
+
+      if(isLoggedIn)
+      {
+        return <Redirect to='/patientScreen'/>;
+      }
+
+      else
+
         return (
 
-<section class="hero is-fullheight">
-  <div class="hero-body"></div>
-    <div class="container">
-      <div class="columns is-centered">
-   
-          <form action="" class="box">
-            <div class="field">
-              <label for="" class="label">Email</label>
-              <div class="control has-icons-left">
-                <input type="email" placeholder="e.g. bobsmith@gmail.com" class="input" required/>
+
+<section className="hero is-fullheight">
+  <div className="hero-body"></div>
+    <div className="container">
+      <div className="columns is-centered">
+          <form onSubmit={this.submitForm} action="" className="box">
+            <div className="field">
+              <label for="" className="label">Username</label>
+              <div className="control has-icons-left">
+                <input onChange={this.onChange} value={this.state.username} name="username"  type="text" className="input" required/>
               </div>
             </div>
-            <div class="field">
-              <label for="" class="label">Password</label>
-              <div class="control has-icons-left">
-                <input type="password" placeholder="*******" class="input" required/>
-                <span class="icon is-small is-left">
-                  <i class="fa fa-lock"></i>
-                </span>
+            <div className="field">
+              <label for="" className="label">Password</label>
+              <div className="control has-icons-left">
+              <input onChange={this.onChange} value={this.state.password} name="password"  type="password" className="input" required/>
               </div>
             </div>
-            <div class="field">
+            <div className="field">
     
-              <button class="button is-success">
+              <button className="button is-primary" type="submit">
                 Login
               </button>
             </div>
@@ -49,13 +96,8 @@ class Login extends Component {
   </div>
   </section>
 
-
-   
-
         );
     }
-}
-
+  
+  }
 export default Login;
-
-
