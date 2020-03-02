@@ -29,12 +29,23 @@ class AuthenticationProvider extends Component {
         });
 
         if (response.status === 200) {
+
+            //Get Token from response 
+
+            const token = response.data.token;
+
+            //set Authenticated to true
+
             this.setState({ isAuthenticated: true })
-            localStorage.setItem('token', response.data.token);
+
+            //set token inside the local storage 
+
+            localStorage.setItem('token', token);
         }
     }
 
     onChange = (e) => {
+
         this.setState({
             [e.target.name]: e.target.value
         })
@@ -47,10 +58,9 @@ class AuthenticationProvider extends Component {
 
     render() {
         return (
-            <AuthContext.Provider value={{
-                ...this.state,
-                onChange: this.onChange, submitForm: this.submitForm
-            }}>
+            <AuthContext.Provider 
+                value={{...this.state,onChange: this.onChange
+                ,submitForm: this.submitForm}}>
                 {this.props.children}
             </AuthContext.Provider>
         )
