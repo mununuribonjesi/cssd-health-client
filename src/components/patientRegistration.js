@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 
 class patientRegistration extends Component {
 
-    
-
-
 render() 
 {
     return(
@@ -12,8 +9,6 @@ render()
     );
 }
 }
-
-
 
 export default patientRegistration;
 
