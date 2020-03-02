@@ -19,15 +19,13 @@ margin-top: 0px;
 
   width: 100%;
 }
-.searchbar {
-
-   
+.searchbar { 
         margin-bottom: 50px;
         margin-top: 50px;
         height: 60px;
-        min-width: 0px;
+        min-width: 60%;
         background-color: #212529;
-        border-radius: 30px;
+        border-radius: 10px;
         padding: 10px;
         z-index: 99999;  
 }

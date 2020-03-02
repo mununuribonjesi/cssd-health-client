@@ -5,7 +5,7 @@ input{
 
 .box {
 
-    padding: 10.25rem !important;
+    padding: 5.25rem !important;
 }
 
 
@@ -14,10 +14,10 @@ input{
     width: 0 !important;
 }
 
-button
+.button
 {
 
-    margin-top: 50px;
+    margin-top: 20px;
     
     
 

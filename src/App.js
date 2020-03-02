@@ -16,23 +16,25 @@ const ProtectedRoute = ({component:Component,...rest}) =>{
 
 
 }
+
+
 export default class App extends Component {
-
-
   render () {
 
     return (
-   <React.Fragment>  
+   <React.Fragment> 
+      <AuthContextProvider>  
       <NavBar/>
       <Router>
         <Switch>
-          <AuthContextProvider> 
+      
           <Route exact path= "/" component={Login} />
           <ProtectedRoute exact path= "/patientScreen" component={patientScreen} />
           <ProtectedRoute exact path= "/patientRegistration" component={patientRegistration}  /> 
-          </AuthContextProvider>
+       
         </Switch>
       </Router>
+      </AuthContextProvider>
     </React.Fragment>
     );
   }

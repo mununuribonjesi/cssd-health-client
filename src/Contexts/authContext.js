@@ -1,5 +1,6 @@
 import React, { createContext, Component } from 'react';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
 
 //creating Auth context
 
@@ -10,16 +11,20 @@ class AuthenticationProvider extends Component {
     constructor(props) {
         super(props)
 
-        this.state = {
-            isAuthenticated: false,
-            username: '',
-            password: ''
-        }
-
         this.submitForm = this.submitForm.bind(this);
         this.onChange = this.onChange.bind(this)
     }
 
+    state = {
+        isAuthenticated: false,
+        username: '',
+        password: ''
+    }
+
+    userLogout(){
+        localStorage.removeItem('token');
+        window.location.reload();
+      };
     //UserAuthentication
 
     async login() {
@@ -44,7 +49,6 @@ class AuthenticationProvider extends Component {
     }
 
     onChange = (e) => {
-
         this.setState({
             [e.target.name]: e.target.value
         })
@@ -59,7 +63,7 @@ class AuthenticationProvider extends Component {
         return (
             <AuthContext.Provider 
                 value={{...this.state,onChange: this.onChange
-                ,submitForm: this.submitForm}}>
+                ,submitForm: this.submitForm,userLogout:this.userLogout}}>
                 {this.props.children}
             </AuthContext.Provider>
         )
