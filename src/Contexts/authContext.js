@@ -28,19 +28,18 @@ class AuthenticationProvider extends Component {
             'password': this.state.password
         });
 
+        const token = response.data.token
+
         if (response.status === 200) {
-
             //Get Token from response 
-
-            const token = response.data.token;
-
-            //set Authenticated to true
-
-            this.setState({ isAuthenticated: true })
-
             //set token inside the local storage 
-
             localStorage.setItem('token', token);
+        }
+
+        if(token)
+        {
+            this.setState({ isAuthenticated: true });
+
         }
     }
 
