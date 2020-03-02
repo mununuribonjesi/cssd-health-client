@@ -5,12 +5,21 @@ import axios from'axios';
 export const AuthContext = createContext();
 
 class AuthenticationProvider extends Component {
-    state = {
+   
+   constructor(props)
+   {
+       super(props)
+
+    this.state = {
         isAuthenticated: false,
-        username:'james',
-        password:'joe'
-    
+        username:'',
+        password:''
     }
+
+    this.submitForm = this.submitForm.bind(this);
+    this.onChange = this.onChange.bind(this)
+
+}
 
     async login() {
 
@@ -21,16 +30,27 @@ class AuthenticationProvider extends Component {
             });
 
         if (response.status === 200) {
-            const token = response.data.token;
-            this.state.isAuthenticated = true;
-            localStorage.setItem('token', token);
+            this.setState({isAuthenticated:false})
+            localStorage.setItem('token', response.data.token);
         }
     }
 
+    onChange = (e) => {
+        this.setState({
+            [e.target.name]: e.target.value
+        })
+    }
 
+    submitForm = (e) =>
+    {
+      e.preventDefault();
+      this.login();
+    }
+    
     render() {
         return (
-            <AuthContext.Provider value={{...this.state,login:this.login}}>
+            <AuthContext.Provider value={{...this.state,
+                onChange:this.onChange,submitForm:this.submitForm}}>
                 {this.props.children}
             </AuthContext.Provider>
         )

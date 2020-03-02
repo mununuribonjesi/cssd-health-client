@@ -22,7 +22,6 @@ export default class App extends Component {
   render () {
 
     return (
-
    <React.Fragment>  
       <NavBar/>
       <Router>
@@ -34,9 +33,7 @@ export default class App extends Component {
           </AuthContextProvider>
         </Switch>
       </Router>
-  
     </React.Fragment>
-
     );
   }
 }
