@@ -29,7 +29,7 @@ export class NavBar extends Component {
 
         <AuthContext.Consumer>
           {(context) => {
-            var { isAuthenticated, username, password, onChange, submitForm, userLogout } = context;
+            var {userLogout } = context;
             console.log(context)
             const token = localStorage.getItem('token');
             if (token) {

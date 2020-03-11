@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './patientScreen.css';
-import { Line } from 'react-chartjs-2';
+import { Line,Bar,HorizontalBar } from 'react-chartjs-2';
+import axios from 'axios';
 
 class patientScreen extends Component {
 
@@ -14,33 +15,177 @@ class patientScreen extends Component {
       isView: false,
       isPatients: true,
       isAppointmentRequest: false,
+      heartRate:[],
+      walkingData:[],
+      users:[],
+      query:null,
+      returned:[]
     }
+
+    this.healthData = this.healthData.bind(this);
+    this.activityData = this.activityData.bind(this);
+ 
   }
 
+
+
+  async componentDidMount()
+  {
+
+    await this.getHeartRate();
+    await this.walkingData();
+    await this.healthData();
+    await this.getUsers();
+    await this.searchUser();
+
+  }
+
+  async getHeartRate() {
+
+    const token = localStorage.getItem('token')
+    
+    const response = await axios.get('https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Heart Rate', {
+
+
+        headers:
+        {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+        if(response.status===200){
+
+          this.setState({heartRate:response.data})
+        }  
+        
+}
+
+async searchUser()
+{
+
+  const token = localStorage.getItem('token');
+
+  const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/users?username=${this.state.query}`,{
+
+    headers:
+    {
+        'Authorization': `Bearer ${token}`
+    }
+
+
+  });
+
+  if(response.status===200){
+
+    this.setState({query:response.data});
+    console.log(response.data);
+  } 
+
+
+}
+
+
+async getUsers()
+{
+    const token = localStorage.getItem('token');
+
+    const response = await axios.get('https://shu-helth-uat.azurewebsites.net/api/users',{
+
+      headers:
+      {
+          'Authorization': `Bearer ${token}`
+      }
+
+
+    });
+
+    if(response.status===200){
+      const users = [];
+      users.push(response.data);
+      this.setState({users:users});
+    } 
+}
+
+async walkingData() {
+
+  const token = localStorage.getItem('token');
+  
+  const response = await axios.get('https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Walking', {
+
+
+      headers:
+      {
+          'Authorization': `Bearer ${token}`
+      }
+  });
+
+      if(response.status===200){
+        
+        this.setState({walkingData:response.data});
+        console.log(this.state.walkingData)
+      }  
+}
+
+
+
+activityData() {
+
+  var labels = [];
+  var data = [];
+
+  for(var i = 0; i < this.state.walkingData.length; i++)
+  {
+    labels.push(this.state.walkingData[i].updatedAt);
+    data.push(this.state.walkingData[i].recorded);
+    
+  }
+
+
+  var recentDataActivity = {
+
+   
+    labels: labels,
+    datasets: [
+      {
+        label: 'Walking',
+        backgroundColor: '#0149D7',
+        borderColor: 'rgba(255,255,255)',
+        borderWidth: 1,
+        hoverBorderColor: 'rgba(255,99,132,1)',
+        data: data
+      }
+    ]
+  }
+
+  return recentDataActivity;
+}
+
+  
   healthData() {
+
+    var labels = [];
+    var data = [];
+
+
+    for(var i = 0; i < this.state.heartRate.length; i++)
+    {
+      labels.push(this.state.heartRate[i].updatedAt);
+      data.push(this.state.heartRate[i].recorded);      
+    }
+
     var recentHealthData = {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+
+     
+      labels: labels,
       datasets: [
         {
-          label: 'Recent Health Data',
-          fill: false,
-          lineTension: 0.1,
-          backgroundColor: 'rgba(75,192,192,0.4)',
-          borderColor: 'rgba(75,192,192,1)',
-          borderCapStyle: 'butt',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: 'yellow',
-          pointBackgroundColor: '#fff',
-          pointBorderWidth: 20,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-          pointHoverBorderColor: 'rgba(220,220,220,1)',
-          pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10,
-          data: [65, 59, 80, 81, 56, 55, 40]
+          label: 'Heart Rate',
+          backgroundColor: '#0149D7',
+          borderColor: 'rgba(255,99,132,1)',
+          borderWidth: 1,
+          hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+          hoverBorderColor: 'rgba(255,99,132,1)',
+          data: data
         }
       ]
     }
@@ -71,22 +216,58 @@ class patientScreen extends Component {
 
   }
 
+  handleChange = (e) => {
+
+    const query = e.target.value;
+    this.setState({query:query},() => this.getSearchResults(query));
+  };
+
+
+async getSearchResults(query)
+{
+
+  const token = localStorage.getItem('token');
+
+  const response =  await axios.get(`https://shu-helth-uat.azurewebsites.net/api/users?username=${query}`,{
+
+    headers:
+    {
+        'Authorization': `Bearer ${token}`
+    }
+
+
+  });
+
+  console.log(response);
+
+  if(response.status===200){
+
+    this.setState({returned:response.data});
+    console.log(response.data);
+  } 
+
+}
+
   render() {
 
     const isAppointmentRequest = this.state.isAppointmentRequest;
     const isPatients = this.state.isPatients;
     const isView = this.state.isView;
     const recentHealthdata = this.healthData;
-    const recentDataActivity = this.healthData;
-
+    const recentDataActivity = this.activityData;
+    const users = this.state.returned;
+    const query = this.state.query;
+    console.log(query);
+    console.log(this.state.returned)
     return (
 
 
       <div className="">
         <div className="columns is-centered">
-          <div className="column searchbar">
-            <input type="text" className="search_input" placeholder="Search Patients" />
-          </div>
+
+            <input onChange={this.handleChange} value={this.state.query} name="query" placeholder="Search Patients" />
+       
+          
         </div>
 
         <div className="columns">
@@ -133,15 +314,18 @@ class patientScreen extends Component {
                 <thead>
                   <tr>
                     <th>Patient Name</th>
-                    <th> </th>
+                    <th> <button class="button is-primary is-large">Register </button> </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Karen B</td>
-                    <td><button onClick={this.showView} class="button is-info">view</button></td>
-
+                { 
+                users.map(user => 
+                  <tr key={user._id}>
+                    <td>{user.name}</td>
+                    <td><button onClick={() => this.showView(user._id)} class="button is-primary is-large">view</button></td>
                   </tr>
+                      )
+                }
                 </tbody>
               </table>
             </div>}
@@ -158,7 +342,7 @@ class patientScreen extends Component {
                     <th>NHS NO: 8674453</th>
                     <th>Name: Karen B</th>
                     <th>Female</th>
-                    <th>  <button onClick={this.showView} class="button is-warning">Export</button></th>
+                    <th>  <button onClick={this.showView} class="button is-warning is-large">Export</button></th>
                   </tr>
                   <tr>
                     <th>
@@ -175,7 +359,7 @@ class patientScreen extends Component {
                     <th>
                       Recent Data Activity
 
-                            <Line
+                            <HorizontalBar
                         height={70}
                         data={recentDataActivity} />
                     </th>
