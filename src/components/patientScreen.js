@@ -3,6 +3,7 @@ import './patientScreen.css';
 import { Line,Bar,HorizontalBar } from 'react-chartjs-2';
 import axios from 'axios';
 
+
 class patientScreen extends Component {
 
   constructor(props) {
@@ -19,11 +20,14 @@ class patientScreen extends Component {
       walkingData:[],
       users:[],
       query:null,
-      returned:[]
+      returned:[],
+      username:'',
+      userId:''
     }
 
     this.healthData = this.healthData.bind(this);
     this.activityData = this.activityData.bind(this);
+    this.showView = this.showView.bind(this);
  
   }
 
@@ -31,20 +35,16 @@ class patientScreen extends Component {
 
   async componentDidMount()
   {
-
-    await this.getHeartRate();
-    await this.walkingData();
-    await this.healthData();
     await this.getUsers();
     await this.searchUser();
 
   }
 
-  async getHeartRate() {
+  async getHeartRate(userId) {
 
     const token = localStorage.getItem('token')
-    
-    const response = await axios.get('https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Heart Rate', {
+
+    const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Heart Rate&userId=${userId}`, {
 
 
         headers:
@@ -59,6 +59,26 @@ class patientScreen extends Component {
         }  
         
 }
+
+async walkingData(userId) {
+
+  const token = localStorage.getItem('token');
+  
+  const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Walking&userId=${userId}`, {
+
+
+      headers:
+      {
+          'Authorization': `Bearer ${token}`
+      }
+  });
+
+      if(response.status===200){
+        
+        this.setState({walkingData:response.data});
+      }  
+}
+
 
 async searchUser()
 {
@@ -80,8 +100,6 @@ async searchUser()
     this.setState({query:response.data});
     console.log(response.data);
   } 
-
-
 }
 
 
@@ -106,25 +124,7 @@ async getUsers()
     } 
 }
 
-async walkingData() {
 
-  const token = localStorage.getItem('token');
-  
-  const response = await axios.get('https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Walking', {
-
-
-      headers:
-      {
-          'Authorization': `Bearer ${token}`
-      }
-  });
-
-      if(response.status===200){
-        
-        this.setState({walkingData:response.data});
-        console.log(this.state.walkingData)
-      }  
-}
 
 
 
@@ -135,11 +135,12 @@ activityData() {
 
   for(var i = 0; i < this.state.walkingData.length; i++)
   {
-    labels.push(this.state.walkingData[i].updatedAt);
-    data.push(this.state.walkingData[i].recorded);
+    var formatDate = require('dateformat'); 
+      var date = new Date(this.state.walkingData[i].updatedAt);
+      labels.push(formatDate(date,"dddd, mmmm dS,yyyy"));
+      data.push(this.state.walkingData[i].recorded);      
     
   }
-
 
   var recentDataActivity = {
 
@@ -156,10 +157,8 @@ activityData() {
       }
     ]
   }
-
   return recentDataActivity;
 }
-
   
   healthData() {
 
@@ -169,7 +168,9 @@ activityData() {
 
     for(var i = 0; i < this.state.heartRate.length; i++)
     {
-      labels.push(this.state.heartRate[i].updatedAt);
+      var formatDate = require('dateformat'); 
+      var date = new Date(this.state.heartRate[i].updatedAt);
+      labels.push(formatDate(date,"dddd, mmmm dS,yyyy"));
       data.push(this.state.heartRate[i].recorded);      
     }
 
@@ -181,7 +182,6 @@ activityData() {
         {
           label: 'Heart Rate',
           backgroundColor: '#0149D7',
-          borderColor: 'rgba(255,99,132,1)',
           borderWidth: 1,
           hoverBackgroundColor: 'rgba(255,99,132,0.4)',
           hoverBorderColor: 'rgba(255,99,132,1)',
@@ -200,12 +200,13 @@ activityData() {
     this.setState({ isAppointmentRequest: true });
   }
 
-  showView() {
+  async showView(userId,username) {
 
-    this.setState({ isPatients: false });
-    this.setState({ isAppointmentRequest: false });
-    this.setState({ isView: true });
+    this.setState({ isPatients: false,isAppointmentRequest: false,isView: true,username:username,userId:userId}
+      );
 
+      await this.getHeartRate(userId); 
+      await this.walkingData(userId);
   }
 
   showPatients() {
@@ -257,6 +258,9 @@ async getSearchResults(query)
     const recentDataActivity = this.activityData;
     const users = this.state.returned;
     const query = this.state.query;
+    const username = this.state.username;
+    const userId = this.state.userId;
+
     console.log(query);
     console.log(this.state.returned)
     return (
@@ -297,8 +301,8 @@ async getSearchResults(query)
                   <tr>
                     <td>Karen B. Healthy</td>
                     <td>2019/10/2020 - 15:00pm</td>
-                    <td><button onClick={this.showAppointments} className="button is-success">Accept </button></td>
-                    <td><button onClick={this.showAppointments} className="button is-danger">Decline </button></td>
+                    <td><button onClick={this.showAppointments} className="button is-large is-success">Accept </button></td>
+                    <td><button onClick={this.showAppointments} className="button is-large is-danger">Decline </button></td>
                   </tr>
                 </tbody>
               </table>
@@ -322,7 +326,7 @@ async getSearchResults(query)
                 users.map(user => 
                   <tr key={user._id}>
                     <td>{user.name}</td>
-                    <td><button onClick={() => this.showView(user._id)} class="button is-primary is-large">view</button></td>
+                    <td><button onClick={() => this.showView(user._id,user.name)} class="button is-primary is-large">view</button></td>
                   </tr>
                       )
                 }
@@ -339,9 +343,8 @@ async getSearchResults(query)
               <table className="table">
                 <thead>
                   <tr>
-                    <th>NHS NO: 8674453</th>
-                    <th>Name: Karen B</th>
-                    <th>Female</th>
+                    <th>NHS NO: {userId}</th>
+                    <th>Name: {username}</th>
                     <th>  <button onClick={this.showView} class="button is-warning is-large">Export</button></th>
                   </tr>
                   <tr>
