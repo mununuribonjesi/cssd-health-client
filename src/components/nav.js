@@ -21,9 +21,6 @@ export class NavBar extends Component {
             Patients
           </a>
 
-          <a href='patientRegistration' className="navbar-item">
-            Register
-          </a>
         </div>
 
         <AuthContext.Consumer>
@@ -32,8 +29,8 @@ export class NavBar extends Component {
             const token = localStorage.getItem('token');
             if (token) {
               return <div className="navbar-end">
-                <a onClick={userLogout} className="navbar-item">
-                  Log Out
+                <a  className="navbar-item">
+                  <button onClick={userLogout} class="button is-danger">Log Out</button>
               </a>
               </div>
             }

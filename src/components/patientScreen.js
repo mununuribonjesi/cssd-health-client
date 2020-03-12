@@ -17,7 +17,7 @@ class patientScreen extends Component {
       isPatients: true,
       isAppointmentRequest: false,
       heartRate: [],
-      WalkingData: [],
+      walkingData: [],
       users: [],
       query: null,
       returned:[],
@@ -67,6 +67,9 @@ class patientScreen extends Component {
       }
     });
 
+    console.log(response);
+
+
     if (response.status === 200) {
 
       this.setState({ walkingData: response.data });
@@ -99,11 +102,11 @@ class patientScreen extends Component {
     var labels = [];
     var data = [];
 
-    for (var i = 0; i < this.state.WalkingData.length; i++) {
+    for (var i = 0; i < this.state.walkingData.length; i++) {
       var formatDate = require('dateformat');
-      var date = new Date(this.state.WalkingData[i].updatedAt);
+      var date = new Date(this.state.walkingData[i].updatedAt);
       labels.push(formatDate(date, "dddd, mmmm dS,yyyy"));
-      data.push(this.state.WalkingData[i].recorded);
+      data.push(this.state.walkingData[i].recorded);
     }
 
     var recentDataActivity = {
@@ -161,11 +164,13 @@ class patientScreen extends Component {
 
   async showView(userId, username) {
 
+    await this.getHeartRate(userId);
+    await this.getWalkingData(userId);
+
     this.setState({ isPatients: false, isAppointmentRequest: false, isView: true, username: username, userId: userId }
     );
 
-    await this.getHeartRate(userId);
-    await this.getWalkingData(userId);
+  
   }
 
   showPatients() {
@@ -228,7 +233,10 @@ class patientScreen extends Component {
 
 
 
-        <div className="columns">
+
+        <div className="columns is-mobile">
+
+          
           <div className="is-one-fifth">
             <button onClick={this.showPatients} className="button is-Dark">Patients</button>
           </div>
@@ -327,13 +335,19 @@ class patientScreen extends Component {
                     <th>
                       Appointment Requests
             </th>
+            <th></th>
+            <th></th>
+            <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>
+                 
+                    <td>{username}</td>
+                    <td>2019/10/2020 - 15:00pm</td>
+                    <td><button onClick={this.showAppointments} className="button is-large is-success">Accept </button></td>
+                    <td><button onClick={this.showAppointments} className="button is-large is-danger">Decline </button></td>
 
-                    </td>
 
 
                   </tr>
