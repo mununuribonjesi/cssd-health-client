@@ -1,9 +1,19 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body{
-  background: #f2f2f2;
+  background: #0149D7;
   font-family: 'Open Sans', sans-serif;
 }
+
+.searchBackground
+{
+  background: #ffff;
+  margin-top: 20px;
+  padding-bottom: 20px;
+
+
+}
+
 button
 {
 margin-top: 0px;

@@ -17,7 +17,6 @@ const ProtectedRoute = ({component:Component,...rest}) =>{
 
 }
 
-
 export default class App extends Component {
   render () {
 

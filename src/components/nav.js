@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import './nav.css';
 import authContext, { AuthContext } from '../Contexts/authContext';
-import { Redirect } from 'react-router-dom';
 
 export class NavBar extends Component {
     static contextType = authContext;
 
   render() {
     return (
-      
+      <div className="container is-fluid">
       <nav className="navbar is-primary" role="navigation">
         <div className="container">
           <div className="navbar-brand">
@@ -30,7 +29,6 @@ export class NavBar extends Component {
         <AuthContext.Consumer>
           {(context) => {
             var {userLogout } = context;
-            console.log(context)
             const token = localStorage.getItem('token');
             if (token) {
               return <div className="navbar-end">
@@ -42,9 +40,8 @@ export class NavBar extends Component {
             
           }}
         </AuthContext.Consumer>
-
-
       </nav>
+      </div>
     );
   }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './patientScreen.css';
-import { Line,Bar,HorizontalBar } from 'react-chartjs-2';
+import { Line, Bar, HorizontalBar } from 'react-chartjs-2';
 import axios from 'axios';
 
 
@@ -16,28 +16,24 @@ class patientScreen extends Component {
       isView: false,
       isPatients: true,
       isAppointmentRequest: false,
-      heartRate:[],
-      walkingData:[],
-      users:[],
-      query:null,
+      heartRate: [],
+      WalkingData: [],
+      users: [],
+      query: null,
       returned:[],
-      username:'',
-      userId:''
+      username: '',
+      userId: ''
     }
 
     this.healthData = this.healthData.bind(this);
     this.activityData = this.activityData.bind(this);
     this.showView = this.showView.bind(this);
- 
+
   }
 
 
 
-  async componentDidMount()
-  {
-    await this.getUsers();
-    await this.searchUser();
-
+  async componentDidMount() {
   }
 
   async getHeartRate(userId) {
@@ -47,136 +43,100 @@ class patientScreen extends Component {
     const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Heart Rate&userId=${userId}`, {
 
 
-        headers:
-        {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-
-        if(response.status===200){
-
-          this.setState({heartRate:response.data})
-        }  
-        
-}
-
-async walkingData(userId) {
-
-  const token = localStorage.getItem('token');
-  
-  const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Walking&userId=${userId}`, {
-
-
       headers:
       {
-          'Authorization': `Bearer ${token}`
-      }
-  });
-
-      if(response.status===200){
-        
-        this.setState({walkingData:response.data});
-      }  
-}
-
-
-async searchUser()
-{
-
-  const token = localStorage.getItem('token');
-
-  const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/users?username=${this.state.query}`,{
-
-    headers:
-    {
         'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.status === 200) {
+
+      this.setState({ heartRate: response.data })
     }
+  }
 
+  async getWalkingData(userId) {
 
-  });
-
-  if(response.status===200){
-
-    this.setState({query:response.data});
-    console.log(response.data);
-  } 
-}
-
-
-async getUsers()
-{
     const token = localStorage.getItem('token');
 
-    const response = await axios.get('https://shu-helth-uat.azurewebsites.net/api/users',{
+    const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Walking&userId=${userId}`, {
 
       headers:
       {
-          'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.status === 200) {
+
+      this.setState({ walkingData: response.data });
+    }
+  }
+
+
+  async getUsers() {
+    const token = localStorage.getItem('token');
+
+    const response = await axios.get('https://shu-helth-uat.azurewebsites.net/api/users', {
+
+      headers:
+      {
+        'Authorization': `Bearer ${token}`
       }
 
 
     });
 
-    if(response.status===200){
+    if (response.status === 200) {
       const users = [];
       users.push(response.data);
-      this.setState({users:users});
-    } 
-}
-
-
-
-
-
-activityData() {
-
-  var labels = [];
-  var data = [];
-
-  for(var i = 0; i < this.state.walkingData.length; i++)
-  {
-    var formatDate = require('dateformat'); 
-      var date = new Date(this.state.walkingData[i].updatedAt);
-      labels.push(formatDate(date,"dddd, mmmm dS,yyyy"));
-      data.push(this.state.walkingData[i].recorded);      
-    
+      this.setState({ users: users });
+    }
   }
 
-  var recentDataActivity = {
+  activityData() {
 
-   
-    labels: labels,
-    datasets: [
-      {
-        label: 'Walking',
-        backgroundColor: '#0149D7',
-        borderColor: 'rgba(255,255,255)',
-        borderWidth: 1,
-        hoverBorderColor: 'rgba(255,99,132,1)',
-        data: data
-      }
-    ]
+    var labels = [];
+    var data = [];
+
+    for (var i = 0; i < this.state.WalkingData.length; i++) {
+      var formatDate = require('dateformat');
+      var date = new Date(this.state.WalkingData[i].updatedAt);
+      labels.push(formatDate(date, "dddd, mmmm dS,yyyy"));
+      data.push(this.state.WalkingData[i].recorded);
+    }
+
+    var recentDataActivity = {
+
+      labels: labels,
+      datasets: [
+        {
+          label: 'Walking',
+          backgroundColor: '#0149D7',
+          borderColor: 'rgba(255,255,255)',
+          borderWidth: 1,
+          hoverBorderColor: 'rgba(255,99,132,1)',
+          data: data
+        }
+      ]
+    }
+    return recentDataActivity;
   }
-  return recentDataActivity;
-}
-  
+
   healthData() {
 
     var labels = [];
     var data = [];
 
-
-    for(var i = 0; i < this.state.heartRate.length; i++)
-    {
-      var formatDate = require('dateformat'); 
+    for (var i = 0; i < this.state.heartRate.length; i++) {
+      var formatDate = require('dateformat');
       var date = new Date(this.state.heartRate[i].updatedAt);
-      labels.push(formatDate(date,"dddd, mmmm dS,yyyy"));
-      data.push(this.state.heartRate[i].recorded);      
+      labels.push(formatDate(date, "dddd, mmmm dS,yyyy"));
+      data.push(this.state.heartRate[i].recorded);
     }
 
     var recentHealthData = {
 
-     
       labels: labels,
       datasets: [
         {
@@ -192,7 +152,6 @@ activityData() {
 
     return recentHealthData;
   }
-
   showAppointments() {
 
     this.setState({ isPatients: false });
@@ -200,13 +159,13 @@ activityData() {
     this.setState({ isAppointmentRequest: true });
   }
 
-  async showView(userId,username) {
+  async showView(userId, username) {
 
-    this.setState({ isPatients: false,isAppointmentRequest: false,isView: true,username:username,userId:userId}
-      );
+    this.setState({ isPatients: false, isAppointmentRequest: false, isView: true, username: username, userId: userId }
+    );
 
-      await this.getHeartRate(userId); 
-      await this.walkingData(userId);
+    await this.getHeartRate(userId);
+    await this.getWalkingData(userId);
   }
 
   showPatients() {
@@ -220,34 +179,31 @@ activityData() {
   handleChange = (e) => {
 
     const query = e.target.value;
-    this.setState({query:query},() => this.getSearchResults(query));
+    this.setState({ query: query }, () => this.getSearchResults(query));
+
   };
 
+  async getSearchResults(query) {
 
-async getSearchResults(query)
-{
+    const token = localStorage.getItem('token');
 
-  const token = localStorage.getItem('token');
+    const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/users?username=${query}`, {
 
-  const response =  await axios.get(`https://shu-helth-uat.azurewebsites.net/api/users?username=${query}`,{
-
-    headers:
-    {
+      headers:
+      {
         'Authorization': `Bearer ${token}`
+      }
+
+
+    });
+
+    if (response.status === 200) {
+
+      this.setState({ returned: response.data });
+      console.log(response.data);
     }
 
-
-  });
-
-  console.log(response);
-
-  if(response.status===200){
-
-    this.setState({returned:response.data});
-    console.log(response.data);
-  } 
-
-}
+  }
 
   render() {
 
@@ -256,23 +212,21 @@ async getSearchResults(query)
     const isView = this.state.isView;
     const recentHealthdata = this.healthData;
     const recentDataActivity = this.activityData;
-    const users = this.state.returned;
-    const query = this.state.query;
+    const users = this.state.returned
+
+
     const username = this.state.username;
     const userId = this.state.userId;
 
-    console.log(query);
-    console.log(this.state.returned)
     return (
 
 
-      <div className="">
+      <div className="container-fluid">
         <div className="columns is-centered">
-
-            <input onChange={this.handleChange} value={this.state.query} name="query" placeholder="Search Patients" />
-       
-          
+          <input onChange={this.handleChange} value={this.state.query} name="query" placeholder="Search Patients" />
         </div>
+
+
 
         <div className="columns">
           <div className="is-one-fifth">
@@ -322,14 +276,15 @@ async getSearchResults(query)
                   </tr>
                 </thead>
                 <tbody>
-                { 
-                users.map(user => 
-                  <tr key={user._id}>
-                    <td>{user.name}</td>
-                    <td><button onClick={() => this.showView(user._id,user.name)} class="button is-primary is-large">view</button></td>
-                  </tr>
-                      )
-                }
+                  {
+                    users.length>0?
+                    users.map(user =>
+                      <tr key={user._id}>
+                        <td>{user.name}</td>
+                        <td><button onClick={() => this.showView(user._id, user.name)} class="button is-primary is-large">view</button></td>
+                      </tr>
+                    ): null
+                  }
                 </tbody>
               </table>
             </div>}
