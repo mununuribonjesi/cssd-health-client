@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Login.css';
 import { Redirect } from 'react-router-dom';
-import authContext, { AuthContext } from '../Contexts/authContext';
+import authContext, { AuthContext } from '../../Contexts/authContext';
 import LoginForm from './loginForm';
 
 class Login extends Component {

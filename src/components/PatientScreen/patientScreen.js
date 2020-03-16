@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import './patientScreen.css';
 import { Line, Bar, HorizontalBar } from 'react-chartjs-2';
 import axios from 'axios';
-
+import Patients from './patients';
+import Appointments from './patientAppointment';
 
 class patientScreen extends Component {
 
@@ -24,14 +25,10 @@ class patientScreen extends Component {
       username: '',
       userId: ''
     }
-
     this.healthData = this.healthData.bind(this);
     this.activityData = this.activityData.bind(this);
     this.showView = this.showView.bind(this);
-
   }
-
-
 
   async componentDidMount() {
   }
@@ -169,8 +166,6 @@ class patientScreen extends Component {
 
     this.setState({ isPatients: false, isAppointmentRequest: false, isView: true, username: username, userId: userId }
     );
-
-  
   }
 
   showPatients() {
@@ -178,7 +173,6 @@ class patientScreen extends Component {
     this.setState({ isView: false });
     this.setState({ isAppointmentRequest: false });
     this.setState({ isPatients: true });
-
   }
 
   handleChange = (e) => {
@@ -230,10 +224,6 @@ class patientScreen extends Component {
         <div className="columns is-centered">
           <input onChange={this.handleChange} value={this.state.query} name="query" placeholder="Search Patients" />
         </div>
-
-
-
-
         <div className="columns is-mobile">
 
           
@@ -247,56 +237,19 @@ class patientScreen extends Component {
         </div>
 
         <div>
-          {isAppointmentRequest &&
-            <div className="columns">
+      <Appointments
+      isAppointmentRequest = {isAppointmentRequest}
+      showAppointments = {this.showAppointments}>
 
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Patient Name</th>
-                    <th>Appointment Date</th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Karen B. Healthy</td>
-                    <td>2019/10/2020 - 15:00pm</td>
-                    <td><button onClick={this.showAppointments} className="button is-large is-success">Accept </button></td>
-                    <td><button onClick={this.showAppointments} className="button is-large is-danger">Decline </button></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>}
+      </Appointments>
         </div>
+      <Patients
 
-        <div>
+      showView={this.showView}
+      isPatients={isPatients}
+      users={users}>
 
-          {isPatients &&
-            <div className="columns">
-
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Patient Name</th>
-                    <th> <button class="button is-primary is-large">Register </button> </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    users.length>0?
-                    users.map(user =>
-                      <tr key={user._id}>
-                        <td>{user.name}</td>
-                        <td><button onClick={() => this.showView(user._id, user.name)} class="button is-primary is-large">view</button></td>
-                      </tr>
-                    ): null
-                  }
-                </tbody>
-              </table>
-            </div>}
-        </div>
+      </Patients>
 
         <div>
 
@@ -347,9 +300,6 @@ class patientScreen extends Component {
                     <td>2019/10/2020 - 15:00pm</td>
                     <td><button onClick={this.showAppointments} className="button is-large is-success">Accept </button></td>
                     <td><button onClick={this.showAppointments} className="button is-large is-danger">Decline </button></td>
-
-
-
                   </tr>
                 </tbody>
               </table>

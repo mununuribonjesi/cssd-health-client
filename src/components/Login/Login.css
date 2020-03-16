@@ -4,12 +4,12 @@ input{
     margin-top: 50px;
 }
 
+
+
 .box {
 
     padding: 5.25rem !important;
 }
-
-
 
 .column{
     flex: none;
@@ -18,9 +18,5 @@ input{
 
 .button
 {
-
-    margin-top: 20px;
-    
-    
-
+    margin-top: 20px !important;     
 }

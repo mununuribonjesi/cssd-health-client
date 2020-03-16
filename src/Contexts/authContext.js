@@ -18,35 +18,39 @@ class AuthenticationProvider extends Component {
     state = {
         isAuthenticated: false,
         username: '',
-        password: ''
+        password: '',
+        isFailed: false
     }
 
-    userLogout(){
+    userLogout() {
         localStorage.removeItem('token');
         window.location.reload();
-      };
-    //UserAuthentication
+    };
 
     async login() {
         const response = await axios.post('https://shu-helth-uat.azurewebsites.net/api/login', {
             'username': this.state.username,
             'password': this.state.password
-        });
+        })
 
-        const token = response.data.token
+        try {
+            const token = response.data.token
 
-        if (response.status === 200) {
-            //Get Token from response 
-            //set token inside the local storage 
-            localStorage.setItem('token', token);
-        }
+            if (response.status === 200) {
+                //Get Token from response 
+                //set token inside the local storage 
+                localStorage.setItem('token', token);
+            }
 
-        if(token)
-        {
-            this.setState({ isAuthenticated: true });
+            if (token) {
+                this.setState({ isAuthenticated: true });
+            }
+        } catch (e) {
 
+            console.log(e.message);
         }
     }
+
 
     onChange = (e) => {
         this.setState({
@@ -61,9 +65,11 @@ class AuthenticationProvider extends Component {
 
     render() {
         return (
-            <AuthContext.Provider 
-                value={{...this.state,onChange: this.onChange
-                ,submitForm: this.submitForm,userLogout:this.userLogout}}>
+            <AuthContext.Provider
+                value={{
+                    ...this.state, onChange: this.onChange
+                    , submitForm: this.submitForm, userLogout: this.userLogout
+                }}>
                 {this.props.children}
             </AuthContext.Provider>
         )

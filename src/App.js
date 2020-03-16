@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import './App.sass';
 import { NavBar } from './components/nav';
-import Login from './components/Login';
-import patientScreen from './components/patientScreen';
+import Login from './components/Login/Login';
+import patientScreen from './components/PatientScreen/patientScreen';
 import { BrowserRouter as Router, Route, Switch,Redirect } from 'react-router-dom';
-import patientRegistration from './components/patientRegistration';
+import patientRegistration from './components/RegistrationScreen/patientRegistration';
 import AuthContextProvider from './Contexts/authContext';
 
 const ProtectedRoute = ({component:Component,...rest}) =>{
