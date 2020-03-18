@@ -45,7 +45,6 @@ class patientRegistration extends Component {
         });
 
         if(response.status===200){
-
           
         }  
     }
@@ -60,6 +59,7 @@ class patientRegistration extends Component {
     submitForm = (e) => {
         e.preventDefault();
         this.patientRegistration();
+        alert("patient registered");
         window.location.reload(false);
     }
 
