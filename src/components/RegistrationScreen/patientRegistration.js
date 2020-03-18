@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './patientRegistration.css';
+import { Redirect } from 'react-router-dom';
 
 class patientRegistration extends Component {
     constructor(props)
@@ -45,7 +46,7 @@ class patientRegistration extends Component {
 
         if(response.status===200){
 
-            console.log('registered user');
+          
         }  
     }
 
@@ -59,6 +60,7 @@ class patientRegistration extends Component {
     submitForm = (e) => {
         e.preventDefault();
         this.patientRegistration();
+        window.location.reload(false);
     }
 
 render() 
