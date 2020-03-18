@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import './App.sass';
+import { NavBar } from './components/nav';
+import Login from './components/Login/Login';
+import patientScreen from './components/PatientScreen/patientScreen';
+import { BrowserRouter as Router, Route, Switch,Redirect } from 'react-router-dom';
+import patientRegistration from './components/RegistrationScreen/patientRegistration';
+import AuthContextProvider from './Contexts/authContext';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const ProtectedRoute = ({component:Component,...rest}) =>{
+
+  return <Route {...rest} render={(props)=>{
+        return localStorage.getItem('token') ?
+        <Component {...props} /> : < Redirect to="/"/>
+  }} />
+
+
 }
 
-export default App;
+export default class App extends Component {
+  render () {
+
+    return (
+   <React.Fragment> 
+      <AuthContextProvider>  
+      <NavBar/>
+      <Router>
+        <Switch>
+      
+          <Route exact path= "/" component={Login} />
+          <ProtectedRoute exact path= "/patientScreen" component={patientScreen} />
+          <ProtectedRoute exact path= "/patientRegistration" component={patientRegistration}  /> 
+       
+        </Switch>
+      </Router>
+      </AuthContextProvider>
+    </React.Fragment>
+    );
+  }
+}

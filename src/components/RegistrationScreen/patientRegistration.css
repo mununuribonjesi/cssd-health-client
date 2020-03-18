@@ -1,0 +1,22 @@
+input{
+    width: 600px;
+    height: 70px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+}
+
+.box {
+
+    padding: 5.25rem !important;
+}
+
+.column{
+    flex: none;
+    width: 0 !important;
+}
+
+.button
+{
+    margin-top: 20px !important;     
+}

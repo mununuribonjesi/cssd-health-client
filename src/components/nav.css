@@ -1,0 +1,37 @@
+
+nav
+{
+
+
+    color: white;
+    height: 50px;
+    font-size: 30px;
+}
+
+ .navbar-end :hover{
+
+    background-color:  transparent !important;
+}
+
+.navbar-start :hover{
+
+    background-color:  transparent !important;
+}
+
+.navbar-brand :hover{
+
+    background-color:  transparent !important;
+}
+
+
+
+
+button{
+    margin-top: 0px !important;
+}
+
+
+
+a:hover{
+    color:white !important;
+}
