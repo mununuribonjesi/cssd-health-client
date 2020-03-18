@@ -20,8 +20,6 @@ class patientRegistration extends Component {
 
         this.submitForm = this.submitForm.bind(this);
         this.onChange = this.onChange.bind(this);
-
-
     }
 
 

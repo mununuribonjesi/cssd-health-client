@@ -1,9 +1,14 @@
-import React, { Component } from 'react';
+ import React, { Component } from 'react';
 import './patientScreen.css';
 import { Line, Bar, HorizontalBar } from 'react-chartjs-2';
 import axios from 'axios';
 import Patients from './patients';
-import Appointments from './patientAppointment';
+import Search from '../Search/search';
+import Tabs from '../Tabs/tabs';
+import Appointments from '../PatientScreen/patientAppointment'
+import Moment from 'react-moment';
+
+
 
 class patientScreen extends Component {
 
@@ -23,7 +28,8 @@ class patientScreen extends Component {
       query: null,
       returned:[],
       username: '',
-      userId: ''
+      userId: '',
+      userAlerts:[]
     }
     this.healthData = this.healthData.bind(this);
     this.activityData = this.activityData.bind(this);
@@ -37,7 +43,16 @@ class patientScreen extends Component {
 
     const token = localStorage.getItem('token')
 
-    const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Heart Rate&userId=${userId}`, {
+    var today = new Date();
+    today.setDate(today.getDate() - 7);
+
+    var range = today.toISOString();
+
+
+    console.log(range)
+
+  
+    const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Heart Rate&userId=${userId}&fromDate=${range}`, {
 
 
       headers:
@@ -49,14 +64,21 @@ class patientScreen extends Component {
     if (response.status === 200) {
 
       this.setState({ heartRate: response.data })
+      console.log(response.data)
     }
   }
+
 
   async getWalkingData(userId) {
 
     const token = localStorage.getItem('token');
 
-    const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Walking&userId=${userId}`, {
+    var today = new Date();
+    today.setDate(today.getDate() -7);
+                    
+    var range = today.toISOString();         
+
+    const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Walking&userId=${userId}&fromDate=${range}`, {
 
       headers:
       {
@@ -67,10 +89,12 @@ class patientScreen extends Component {
     console.log(response);
 
 
-    if (response.status === 200) {
+    if (response.status === 200) 
+    {
 
-      this.setState({ walkingData: response.data });
+        this.setState({ walkingData: response.data });
     }
+
   }
 
 
@@ -128,6 +152,8 @@ class patientScreen extends Component {
     var labels = [];
     var data = [];
 
+
+
     for (var i = 0; i < this.state.heartRate.length; i++) {
       var formatDate = require('dateformat');
       var date = new Date(this.state.heartRate[i].updatedAt);
@@ -159,12 +185,13 @@ class patientScreen extends Component {
     this.setState({ isAppointmentRequest: true });
   }
 
-  async showView(userId, username) {
+  async showView(userId, username,userAlerts) {
 
     await this.getHeartRate(userId);
     await this.getWalkingData(userId);
 
-    this.setState({ isPatients: false, isAppointmentRequest: false, isView: true, username: username, userId: userId }
+
+    this.setState({ isPatients: false, isAppointmentRequest: false, isView: true, username: username, userId: userId,userAlerts: userAlerts}
     );
   }
 
@@ -209,9 +236,13 @@ class patientScreen extends Component {
     const isAppointmentRequest = this.state.isAppointmentRequest;
     const isPatients = this.state.isPatients;
     const isView = this.state.isView;
-    const recentHealthdata = this.healthData;
+    const recentHealthData = this.healthData;
+    console.log(this.healthData);
     const recentDataActivity = this.activityData;
-    const users = this.state.returned
+    const users = this.state.returned;
+    const alerts = this.state.userAlerts;
+
+    console.log(alerts);
 
 
     const username = this.state.username;
@@ -221,96 +252,120 @@ class patientScreen extends Component {
 
 
       <div className="container-fluid">
-        <div className="columns is-centered">
-          <input onChange={this.handleChange} value={this.state.query} name="query" placeholder="Search Patients" />
-        </div>
-        <div className="columns is-mobile">
-
-          
-          <div className="is-one-fifth">
-            <button onClick={this.showPatients} className="button is-Dark">Patients</button>
-          </div>
-
-          <div className="is-one-fifth">
-            <button onClick={this.showAppointments} className="button is-Dark">Appointment Requests</button>
-          </div>
-        </div>
+          <Search
+            handleChange = {this.handleChange}
+            query = {this.state.query}>
+          </Search>
+   
+      <Tabs
+       showPatients = {this.showPatients}
+       showAppointments = {this.showAppointments} >
+      </Tabs>
 
         <div>
       <Appointments
       isAppointmentRequest = {isAppointmentRequest}
       showAppointments = {this.showAppointments}>
-
       </Appointments>
         </div>
       <Patients
-
       showView={this.showView}
       isPatients={isPatients}
-      users={users}>
-
+      users={users}
+      alerts={Response}
+      >
+      
       </Patients>
 
-        <div>
-
-          {isView &&
-            <div className="columns">
-
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>NHS NO: {userId}</th>
-                    <th>Name: {username}</th>
-                    <th>  <button onClick={this.showView} class="button is-warning is-large">Export</button></th>
-                  </tr>
-                  <tr>
-                    <th>
-                      Recent Health Data
-
-                            <Line
-                        height={70}
-                        data={recentHealthdata} />
 
 
-                    </th>
-                  </tr>
-                  <tr>
-                    <th>
-                      Recent Data Activity
+{isView &&
+  <div className="columns">
 
-                            <HorizontalBar
-                        height={70}
+
+    <table className="table">
+      <thead>
+        <tr>
+          <th>NHS NO: {userId}</th>
+          <th>Name: {username}</th>
+          <th>  <button onClick={this.showView} class="button is-warning is-large">Export</button></th>
+        </tr>
+        <tr>
+          <th>
+            Recent Health Data
+
+            <Line
+        height={250}
+        data={recentHealthData} />
+
+          </th>
+        </tr>
+        <tr>
+          <th>
+            Recent Data Activity
+
+            <HorizontalBar
+                        height={250}
                         data={recentDataActivity} />
-                    </th>
-                  </tr>
 
-                  <tr>
-                    <th>
-                      Appointment Requests
-            </th>
-            <th></th>
-            <th></th>
-            <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                 
-                    <td>{username}</td>
-                    <td>2019/10/2020 - 15:00pm</td>
-                    <td><button onClick={this.showAppointments} className="button is-large is-success">Accept </button></td>
-                    <td><button onClick={this.showAppointments} className="button is-large is-danger">Decline </button></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>}
-        </div>
-      </div>
+
+      
+          </th>
+        </tr>
+
+        <tr>
+          <th>
+            Appointment Requests
+  </th>
+  <th></th>
+  <th></th>
+  <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+       
+          <td>{username}</td>
+          <td>2019/10/2020 - 15:00pm</td>
+          <td><button onClick={this.showAppointments} className="button is-large is-success">Accept </button></td>
+          <td><button onClick={this.showAppointments} className="button is-large is-danger">Decline </button></td>
+        </tr>
+      </tbody>
+      <th>
+            Alerts
+  </th>
+      <tr>
+
+  <th>Message</th>
+  <th>Date</th>
+        </tr>
+      <tbody>
+        
+
+       { alerts.length>0?
+         alerts.map(alert =>
+          <tr key ={alert.measurement._id}>
+          <td>{alert.message}</td>
+          <td><Moment format="YYYY/MM/DD">{alert.measurement.recordedAt}</Moment></td>
+          </tr>
+         ):null
+       }
+    
+      </tbody>
+    </table>
+
+  </div>
+  
+  
+  
+  }
+
+
+</div>
 
     );
   }
 }
 
 export default patientScreen;
-
 

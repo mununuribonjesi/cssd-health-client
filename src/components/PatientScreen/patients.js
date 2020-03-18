@@ -20,7 +20,7 @@ const Patients =(props) =>
                     props.users.map(user =>
                       <tr key={user._id}>
                         <td>{user.name}</td>
-                        <td><button onClick={() => props.showView(user._id, user.name)} class="button is-primary is-large">view</button></td>
+                        <td><button onClick={() => props.showView(user._id, user.name, user.alerts)} class="button is-primary is-large">view</button></td>
                       </tr>
                     ): null
                   }
@@ -28,5 +28,6 @@ const Patients =(props) =>
               </table>
             </div>}
      </div>
+
 
 export default Patients
