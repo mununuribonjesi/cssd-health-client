@@ -1,6 +1,6 @@
 import React, { createContext, Component } from 'react';
 import axios from 'axios';
-import { Redirect } from 'react-router-dom';
+
 
 //creating Auth context
 
@@ -46,8 +46,6 @@ class AuthenticationProvider extends Component {
                 this.setState({ isAuthenticated: true });
             }
         } catch (e) {
-
-            console.log(e.message);
         }
     }
 

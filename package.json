@@ -13,6 +13,7 @@
     "node-sass": "^4.13.1",
     "primereact": "^4.1.0",
     "react": "^16.12.0",
+    "react-calendar": "^3.0.0",
     "react-chartjs-2": "^2.9.0",
     "react-dom": "^16.12.0",
     "react-moment": "^0.9.7",

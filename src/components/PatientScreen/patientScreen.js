@@ -1,14 +1,12 @@
  import React, { Component } from 'react';
 import './patientScreen.css';
-import { Line, Bar, HorizontalBar } from 'react-chartjs-2';
+import { Line, HorizontalBar } from 'react-chartjs-2';
 import axios from 'axios';
 import Patients from './patients';
 import Search from '../Search/search';
 import Tabs from '../Tabs/tabs';
 import Appointments from '../PatientScreen/patientAppointment'
 import Moment from 'react-moment';
-
-
 
 class patientScreen extends Component {
 
@@ -44,14 +42,9 @@ class patientScreen extends Component {
     const token = localStorage.getItem('token')
 
     var today = new Date();
-    today.setDate(today.getDate() - 7);
+    today.setDate(today.getDate() - 14);
 
     var range = today.toISOString();
-
-
-    console.log(range)
-
-  
     const response = await axios.get(`https://shu-helth-uat.azurewebsites.net/api/measurement?metrics=Heart Rate&userId=${userId}&fromDate=${range}`, {
 
 
@@ -64,7 +57,6 @@ class patientScreen extends Component {
     if (response.status === 200) {
 
       this.setState({ heartRate: response.data })
-      console.log(response.data)
     }
   }
 
@@ -74,7 +66,7 @@ class patientScreen extends Component {
     const token = localStorage.getItem('token');
 
     var today = new Date();
-    today.setDate(today.getDate() -7);
+    today.setDate(today.getDate() -14);
                     
     var range = today.toISOString();         
 
@@ -85,9 +77,6 @@ class patientScreen extends Component {
         'Authorization': `Bearer ${token}`
       }
     });
-
-    console.log(response);
-
 
     if (response.status === 200) 
     {
@@ -125,7 +114,7 @@ class patientScreen extends Component {
 
     for (var i = 0; i < this.state.walkingData.length; i++) {
       var formatDate = require('dateformat');
-      var date = new Date(this.state.walkingData[i].updatedAt);
+      var date = new Date(this.state.walkingData[i].recordedAt);
       labels.push(formatDate(date, "dddd, mmmm dS,yyyy"));
       data.push(this.state.walkingData[i].recorded);
     }
@@ -152,11 +141,9 @@ class patientScreen extends Component {
     var labels = [];
     var data = [];
 
-
-
     for (var i = 0; i < this.state.heartRate.length; i++) {
       var formatDate = require('dateformat');
-      var date = new Date(this.state.heartRate[i].updatedAt);
+      var date = new Date(this.state.heartRate[i].recordedAt);
       labels.push(formatDate(date, "dddd, mmmm dS,yyyy"));
       data.push(this.state.heartRate[i].recorded);
     }
@@ -226,7 +213,6 @@ class patientScreen extends Component {
     if (response.status === 200) {
 
       this.setState({ returned: response.data });
-      console.log(response.data);
     }
 
   }
@@ -237,14 +223,8 @@ class patientScreen extends Component {
     const isPatients = this.state.isPatients;
     const isView = this.state.isView;
     const recentHealthData = this.healthData;
-    console.log(this.healthData);
     const recentDataActivity = this.activityData;
     const users = this.state.returned;
-    const alerts = this.state.userAlerts;
-
-    console.log(alerts);
-
-
     const username = this.state.username;
     const userId = this.state.userId;
 
@@ -277,11 +257,8 @@ class patientScreen extends Component {
       
       </Patients>
 
-
-
 {isView &&
   <div className="columns">
-
 
     <table className="table">
       <thead>
@@ -289,6 +266,7 @@ class patientScreen extends Component {
           <th>NHS NO: {userId}</th>
           <th>Name: {username}</th>
           <th>  <button onClick={this.showView} class="button is-warning is-large">Export</button></th>
+          <th></th>
         </tr>
         <tr>
           <th>
@@ -308,8 +286,6 @@ class patientScreen extends Component {
                         height={250}
                         data={recentDataActivity} />
 
-
-      
           </th>
         </tr>
 
@@ -342,8 +318,8 @@ class patientScreen extends Component {
       <tbody>
         
 
-       { alerts.length>0?
-         alerts.map(alert =>
+       { this.state.userAlerts > 0 ?
+         this.state.userAlerts.map(alert =>
           <tr key ={alert.measurement._id}>
           <td>{alert.message}</td>
           <td><Moment format="YYYY/MM/DD">{alert.measurement.recordedAt}</Moment></td>
@@ -355,11 +331,7 @@ class patientScreen extends Component {
     </table>
 
   </div>
-  
-  
-  
   }
-
 
 </div>
 
