@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import './patients.css'
 
 const Patients =(props) =>
 
@@ -11,7 +12,7 @@ const Patients =(props) =>
                 <thead>
                   <tr>
                     <th>Patient Name</th>
-                    <th> <button class="button is-primary is-large">Register </button> </th>
+                    <th> <button class="button is-primary is-large"><a href="/patientRegistration">Register </a> </button> </th>
                   </tr>
                 </thead>
                 <tbody>

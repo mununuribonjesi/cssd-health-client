@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import './patientRegistration.css';
 
 class patientRegistration extends Component {
     constructor(props)
@@ -21,9 +22,6 @@ class patientRegistration extends Component {
         this.submitForm = this.submitForm.bind(this);
         this.onChange = this.onChange.bind(this);
     }
-
-
-
 
     async patientRegistration() {
 
